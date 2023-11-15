@@ -96,6 +96,8 @@ namespace ZendeskApi_v2.Requests
 
         bool DeleteMultiple(IEnumerable<long> ids);
 
+        bool DeleteTicketPermanently(long id);
+
         GroupUserResponse GetCollaborators(long id);
 
         GroupTicketResponse GetIncidents(long id);
@@ -141,7 +143,7 @@ namespace ZendeskApi_v2.Requests
 
         bool DeleteManySuspendedTickets(IEnumerable<long> ids);
 
-        GroupTicketMetricResponse GetAllTicketMetrics();
+        GroupTicketMetricResponse GetAllTicketMetrics(int? perPage = null, int? page = null, TicketSideLoadOptionsEnum sideLoadOptions = TicketSideLoadOptionsEnum.None);
 
         IndividualTicketMetricResponse GetTicketMetricsForTicket(long ticket_id);
 
@@ -205,6 +207,8 @@ namespace ZendeskApi_v2.Requests
 
         Task<bool> DeleteMultipleAsync(IEnumerable<long> ids);
 
+        Task<bool> DeleteTicketPermanentlyAsync(long id);
+
         Task<GroupUserResponse> GetCollaboratorsAsync(long id);
 
         Task<GroupTicketResponse> GetIncidentsAsync(long id);
@@ -262,7 +266,7 @@ namespace ZendeskApi_v2.Requests
 
         Task<bool> DeleteTicketFormAsync(long id);
 
-        Task<GroupTicketMetricResponse> GetAllTicketMetricsAsync();
+        Task<GroupTicketMetricResponse> GetAllTicketMetricsAsync(int? perPage = null, int? page = null, TicketSideLoadOptionsEnum sideLoadOptions = TicketSideLoadOptionsEnum.None);
 
         Task<IndividualTicketMetricResponse> GetTicketMetricsForTicketAsync(long ticket_id);
 
@@ -278,6 +282,7 @@ namespace ZendeskApi_v2.Requests
     public class Tickets : Core, ITickets
     {
         private const string _tickets = "tickets";
+        private const string _deletedTickets = "deleted_tickets";
         private const string _imports = "imports";
         private const string _create_many = "create_many";
         private const string _ticket_forms = "ticket_forms";
@@ -476,6 +481,16 @@ namespace ZendeskApi_v2.Requests
         public bool DeleteMultiple(IEnumerable<long> ids)
         {
             return GenericDelete($"{_tickets}/destroy_many.json?ids={ids.ToCsv()}");
+        }
+
+        /// <summary>
+        /// Permanently deletes a soft-deleted ticket
+        /// </summary>
+        /// <param name="id">Id of ticket to be permanently deleted.</param>
+        /// <returns>Boolean response</returns>
+        public bool DeleteTicketPermanently(long id)
+        {
+            return GenericDelete($"{_deletedTickets}/{id}.json");
         }
 
         /// <summary>
@@ -681,9 +696,10 @@ namespace ZendeskApi_v2.Requests
 
         #region TicketMetrics
 
-        public GroupTicketMetricResponse GetAllTicketMetrics()
+        public GroupTicketMetricResponse GetAllTicketMetrics(int? perPage = null, int? page = null, TicketSideLoadOptionsEnum sideLoadOptions = TicketSideLoadOptionsEnum.None)
         {
-            return GenericGet<GroupTicketMetricResponse>($"{_ticket_metrics}.json");
+            var resource = GetResourceStringWithSideLoadOptionsParam($"{_ticket_metrics}.json", sideLoadOptions);
+            return GenericPagedGet<GroupTicketMetricResponse>(resource, perPage, page);
         }
 
         public IndividualTicketMetricResponse GetTicketMetricsForTicket(long ticket_id)
@@ -845,6 +861,16 @@ namespace ZendeskApi_v2.Requests
         public async Task<bool> DeleteMultipleAsync(IEnumerable<long> ids)
         {
             return await GenericDeleteAsync($"{_tickets}/destroy_many.json?ids={ids.ToCsv()}");
+        }
+
+        /// <summary>
+        /// Permanently deletes a soft-deleted ticket
+        /// </summary>
+        /// <param name="id">Id of ticket to be permanently deleted.</param>
+        /// <returns>Boolean response</returns>
+        public async Task<bool> DeleteTicketPermanentlyAsync(long id)
+        {
+            return await GenericDeleteAsync($"{_deletedTickets}/{id}.json");
         }
 
         public async Task<GroupUserResponse> GetCollaboratorsAsync(long id)
@@ -1053,9 +1079,10 @@ namespace ZendeskApi_v2.Requests
 
         #region TicketMetrics
 
-        public Task<GroupTicketMetricResponse> GetAllTicketMetricsAsync()
+        public async Task<GroupTicketMetricResponse> GetAllTicketMetricsAsync(int? perPage = null, int? page = null, TicketSideLoadOptionsEnum sideLoadOptions = TicketSideLoadOptionsEnum.None)
         {
-            return GenericGetAsync<GroupTicketMetricResponse>($"{_ticket_metrics}.json");
+            var resource = GetResourceStringWithSideLoadOptionsParam($"{_ticket_metrics}.json", sideLoadOptions);
+            return await GenericPagedGetAsync<GroupTicketMetricResponse>(resource, perPage, page);
         }
 
         public Task<IndividualTicketMetricResponse> GetTicketMetricsForTicketAsync(long ticket_id)
