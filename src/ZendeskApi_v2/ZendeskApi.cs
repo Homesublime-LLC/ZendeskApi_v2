@@ -64,6 +64,7 @@ namespace ZendeskApi_v2
         public ISchedules Schedules { get; set; }
         public ITargets Targets { get; set; }
         public IAutomations Automations { get; set; }
+        public ISideConversations SideConversations { get; set; }
 
         public string ZendeskUrl { get; set; }
 
@@ -145,6 +146,7 @@ namespace ZendeskApi_v2
             Schedules = new Schedules(formattedUrl, user, password, apiToken, p_OAuthToken);
             Targets = new Targets(formattedUrl, user, password, apiToken, p_OAuthToken);
             Automations = new Automations(formattedUrl, user, password, apiToken, p_OAuthToken);
+            SideConversations = new SideConversations(formattedUrl, user, password, apiToken, p_OAuthToken);
 
             ZendeskUrl = formattedUrl;
         }

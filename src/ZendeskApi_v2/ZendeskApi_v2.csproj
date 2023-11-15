@@ -28,11 +28,11 @@
 
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <TargetFrameworks>netstandard2.1;net462</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net47</TargetFrameworks>
     <NoWarn>1701;1702;NU5105;NU1605;NU1701;$(NoWarn)</NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)'=='net462'">
+  <PropertyGroup Condition="'$(TargetFramework)'=='net47'">
     <DefineConstants>$(DefineConstants);ASYNC;SYNC</DefineConstants>
   </PropertyGroup>
 
@@ -48,7 +48,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net47'">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 
